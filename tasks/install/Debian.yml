@@ -15,22 +15,22 @@
   - name: Overwrite Ubuntu release repo name for Ubuntu 18
     set_fact:
       zerotier_deb_release_repo: bionic
-  - name: Re-gather facts
-    setup: ~
-  when:
-    - ansible_facts['distribution'] == "Ubuntu"
-    - ansible_facts['distribution_major_version'] == "18"
-    - release_repo.status == 404
-
+    register: overwrite_release_repo
+    when:
+      - ansible_facts['distribution'] == "Ubuntu"
+      - ansible_facts['distribution_major_version'] == "18"
+      - release_repo.status == 404
   - name: Overwrite Ubuntu release repo name for Ubuntu 20
     set_fact:
       zerotier_deb_release_repo: buster
+    register: overwrite_release_repo
+    when:
+      - ansible_facts['distribution'] == "Ubuntu"
+      - ansible_facts['distribution_major_version'] == "20"
+      - release_repo.status == 404
   - name: Re-gather facts
     setup: ~
-  when:
-    - ansible_facts['distribution'] == "Ubuntu"
-    - ansible_facts['distribution_major_version'] == "20"
-    - release_repo.status == 404
+    when: overwrite_release_repo is defined and overwrite_release_repo.changed
 
 - name: Add ZeroTier APT repository
   apt_repository:
