@@ -10,6 +10,7 @@
   when:
     - ansible_facts['distribution'] == "Ubuntu"
   register: release_repo
+  check_mode: no
 
 - block:
   - name: Overwrite Ubuntu release repo name for Ubuntu 18
